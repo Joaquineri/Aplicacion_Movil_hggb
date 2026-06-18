@@ -552,7 +552,7 @@ const s = StyleSheet.create({
 
   // QR
   overlayQR:      { flex: 1, backgroundColor: 'rgba(0,0,0,0.6)', justifyContent: 'center', alignItems: 'center', padding: 24 },
-  tituloQR:       { fontSize: 32, fontWeight: 'bold', color: '#fff', marginBottom: 16 },
+  tituloQR:       { fontSize: 32, fontWeight: 'bold', color: '#fff', marginBottom: 16, fontFamily:'ATTFShinGoProBold', },
   instruccionQR:  { fontSize: 18, color: '#fff', textAlign: 'center', lineHeight: 26, marginBottom: 40 },
   marcoQR:        { width: 220, height: 220, borderWidth: 3, borderColor: '#fff', borderRadius: 16, marginBottom: 40 },
   btnSimular:     { backgroundColor: ROJO, padding: 14, borderRadius: 10, borderWidth: 2, borderColor: '#fff' },

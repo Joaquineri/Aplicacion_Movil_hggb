@@ -11,8 +11,10 @@
  *   disponibles en el árbol de rutas de Expo Router.
  */
 
+import { useFonts } from 'expo-font';
 import { Tabs } from 'expo-router';
-import React from 'react';
+import * as SplashScreen from 'expo-splash-screen';
+import React, { useEffect } from 'react';
 
 import { HapticTab } from '@/components/haptic-tab'; // Botón personalizado con soporte para eventos de vibración física (háptica).
 import { IconSymbol } from '@/components/ui/icon-symbol'; // Abstracción para renderizar íconos SF Symbols en iOS e íconos SVG/Material en Android/Web.
@@ -21,6 +23,23 @@ import { useColorScheme } from '@/hooks/use-color-scheme';
 
 export default function TabLayout() {
   const colorScheme = useColorScheme();
+
+      const [loaded] = useFonts({
+    
+        'ATTFShinGoProBold':require('@/assets/fonts/ATTFShinGoProDeBold.ttf'),
+    
+    
+      });
+    
+      useEffect(() => {
+        if (loaded) {
+          SplashScreen.hideAsync();
+        }
+      }, [loaded]);
+    
+      if (!loaded) {
+        return null;
+      }
 
   return (
     <Tabs
@@ -32,7 +51,7 @@ export default function TabLayout() {
         // Asignación global de la retroalimentación háptica para todos los botones de la barra de pestañas.
         tabBarButton: HapticTab,
         // Estilos específicos para mejorar la legibilidad y espaciado de los textos y barra.
-        tabBarLabelStyle: { fontSize: 13, fontWeight: '600' },
+        tabBarLabelStyle: { fontSize: 13, fontWeight: '600', fontFamily:'ATTFShinGoProBold',},
         tabBarStyle: { height: 65, paddingBottom: 10, paddingTop: 5 },
       }}>
       
@@ -62,6 +81,16 @@ export default function TabLayout() {
           tabBarIcon: ({ color }) => <IconSymbol size={30} name="star.fill" color={color} />,
         }}
       />
+
+                  {/* Pestaña: Reseñas (Sección interactiva de feedback de servicios) */}
+      <Tabs.Screen
+        name="ajustes"
+        options={{
+          title: 'Ajustes',
+          tabBarIcon: ({ color }) => <IconSymbol size={30} name="star.fill" color={color} />,
+        }}
+
+        />
       
       {/* 
        * Pestaña Oculta: mapa (map)

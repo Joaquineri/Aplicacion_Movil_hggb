@@ -16,6 +16,9 @@ import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-nati
 
 import { Colors } from '@/constants/theme';
 import { useColorScheme } from '@/hooks/use-color-scheme';
+import { useFonts } from 'expo-font';
+import * as SplashScreen from 'expo-splash-screen';
+import { useEffect } from 'react';
 
 export default function BienvenidoScreen() {
   const colorScheme = useColorScheme();
@@ -26,7 +29,24 @@ export default function BienvenidoScreen() {
   const navegarA = (ruta: '/navigation' | '/reviews') => {
     router.push(ruta);
   };
-
+    const [loaded] = useFonts({
+  
+      'ATTFShinGoProBold':require('@/assets/fonts/ATTFShinGoProDeBold.ttf'),
+  
+  
+    });
+  
+    useEffect(() => {
+      if (loaded) {
+        SplashScreen.hideAsync();
+      }
+    }, [loaded]);
+  
+    if (!loaded) {
+      return null;
+    }
+    
+  
   return (
     <ScrollView
       style={[styles.scrollContainer, { backgroundColor: themeColors.background }]}
@@ -149,6 +169,7 @@ const styles = StyleSheet.create({
     fontSize: 28,
     fontWeight: 'bold',
     textAlign: 'center',
+    fontFamily:'ATTFShinGoProBold',
   },
   subtituloHospital: {
     fontSize: 14,
@@ -156,6 +177,7 @@ const styles = StyleSheet.create({
     marginTop: 4,
     textAlign: 'center',
     fontWeight: '500',
+    fontFamily:'ATTFShinGoProBold',
   },
   divisor: {
     width: 60,
@@ -206,6 +228,7 @@ const styles = StyleSheet.create({
   tarjetaTitulo: {
     fontSize: 17,
     fontWeight: 'bold',
+    fontFamily:'ATTFShinGoProBold',
   },
   tarjetaDescripcion: {
     fontSize: 13,
@@ -227,6 +250,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: 'bold',
     marginBottom: 14,
+    fontFamily:'ATTFShinGoProBold',
   },
   guiaPaso: {
     flexDirection: 'row',
