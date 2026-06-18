@@ -16,13 +16,6 @@
 
 import { CameraView, useCameraPermissions } from 'expo-camera'; // Módulo nativo para interactuar con la cámara física
 import React, { useMemo, useState } from 'react';
-
-import { useColorScheme } from '@/hooks/use-color-scheme';
-import { useFonts } from 'expo-font';
-import * as SplashScreen from 'expo-splash-screen';
-import { useEffect } from 'react';
-
-
 import {
   Alert,
   Animated,
@@ -323,24 +316,6 @@ export default function NavigationScreen() {
       </View>
     );
   }
-  const colorScheme = useColorScheme();
-  const [loaded] = useFonts({
-
-    'ATTFShinGoProBold':require('@/assets/fonts/ATTFShinGoProDeBold.ttf'),
-
-
-  });
-
-  useEffect(() => {
-    if (loaded) {
-      SplashScreen.hideAsync();
-    }
-  }, [loaded]);
-
-  if (!loaded) {
-    return null;
-  }
-
 
   // ── ESTADO 2: Mapa Activo + Panel de Control Flotante ─────────────────────
   // Se renderiza cuando la ubicación de origen ya fue obtenida mediante el QR.
@@ -577,8 +552,8 @@ const s = StyleSheet.create({
 
   // QR
   overlayQR:      { flex: 1, backgroundColor: 'rgba(0,0,0,0.6)', justifyContent: 'center', alignItems: 'center', padding: 24 },
-  tituloQR:       { fontSize: 32, color: '#fff', marginBottom: 16, fontFamily:'ATTFShinGoProBold' },
-  instruccionQR:  { fontSize: 18, color: '#fff', textAlign: 'center', lineHeight: 26, marginBottom: 40, fontFamily:'ATTFShinGoProMedium' },
+  tituloQR:       { fontSize: 32, fontWeight: 'bold', color: '#fff', marginBottom: 16, fontFamily:'ATTFShinGoProBold', },
+  instruccionQR:  { fontSize: 18, color: '#fff', textAlign: 'center', lineHeight: 26, marginBottom: 40 },
   marcoQR:        { width: 220, height: 220, borderWidth: 3, borderColor: '#fff', borderRadius: 16, marginBottom: 40 },
   btnSimular:     { backgroundColor: ROJO, padding: 14, borderRadius: 10, borderWidth: 2, borderColor: '#fff' },
   btnSimularTexto:{ color: '#fff', fontWeight: 'bold', fontSize: 14 },

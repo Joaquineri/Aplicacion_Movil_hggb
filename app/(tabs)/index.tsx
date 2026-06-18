@@ -29,7 +29,6 @@ export default function BienvenidoScreen() {
   const navegarA = (ruta: '/navigation' | '/reviews') => {
     router.push(ruta);
   };
-
     const [loaded] = useFonts({
   
       'ATTFShinGoProBold':require('@/assets/fonts/ATTFShinGoProDeBold.ttf'),
@@ -46,7 +45,8 @@ export default function BienvenidoScreen() {
     if (!loaded) {
       return null;
     }
-
+    
+  
   return (
     <ScrollView
       style={[styles.scrollContainer, { backgroundColor: themeColors.background }]}
@@ -227,7 +227,7 @@ const styles = StyleSheet.create({
   },
   tarjetaTitulo: {
     fontSize: 17,
-    fontWeight: 'bold', 
+    fontWeight: 'bold',
     fontFamily:'ATTFShinGoProBold',
   },
   tarjetaDescripcion: {
@@ -250,7 +250,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: 'bold',
     marginBottom: 14,
-  fontFamily:'ATTFShinGoProBold',
+    fontFamily:'ATTFShinGoProBold',
   },
   guiaPaso: {
     flexDirection: 'row',

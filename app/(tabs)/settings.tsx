@@ -1,7 +1,9 @@
 import { ThemedView } from '@/components/themed-view';
 import { Colors } from '@/constants/theme';
 import { useColorScheme } from '@/hooks/use-color-scheme';
-
+import { useFonts } from 'expo-font';
+import * as SplashScreen from 'expo-splash-screen';
+import { useEffect } from 'react';
 
 import {
   Appearance,
@@ -15,6 +17,22 @@ import {
 export default function SettingsScreen() {
   const colorScheme = useColorScheme();
   const themeColors = Colors[colorScheme ?? 'light'];
+  const [loaded] = useFonts({
+
+    'ATTFShinGoProBold':require('@/assets/fonts/ATTFShinGoProDeBold.ttf'),
+
+
+  });
+
+  useEffect(() => {
+    if (loaded) {
+      SplashScreen.hideAsync();
+    }
+  }, [loaded]);
+
+  if (!loaded) {
+    return null;
+  }
   
 
   return (

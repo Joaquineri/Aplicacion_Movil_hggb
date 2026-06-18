@@ -16,8 +16,6 @@
 import { Colors } from '@/constants/theme';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 import AsyncStorage from '@react-native-async-storage/async-storage'; // Librería de persistencia asíncrona clave-valor nativa
-import { useFonts } from 'expo-font';
-import * as SplashScreen from 'expo-splash-screen';
 import React, { useCallback, useEffect, useState } from 'react';
 import {
   Alert,
@@ -68,6 +66,8 @@ const AZUL  = '#1a73e8';
 const VERDE = '#2e7d32';
 const FONDO = 'themeColors';
 
+
+
 // ─── Subcomponentes Internos ─────────────────────────────────────────────────
 // Descomponer la pantalla en subcomponentes funcionales mejora la mantenibilidad del código
 // y evita re-renderizados innecesarios del formulario completo.
@@ -105,17 +105,19 @@ function SelectorEstrellas({
  */
 function TarjetaResena({ resena }: { resena: Resena }) {
   const estrellas = '★'.repeat(resena.calificacion) + '☆'.repeat(5 - resena.calificacion);
+  const colorScheme = useColorScheme();
+  const themeColors = Colors[colorScheme ?? 'light'];
 
   return (
-    <View style={st.tarjeta}>
+    <View style={[st.tarjeta]}>
       <View style={st.tarjetaEncabezado}>
-        <Text style={st.tarjetaAutor}>👤 {resena.autor}</Text>
-        <Text style={st.tarjetaFecha}>{resena.fecha}</Text>
+        <Text style={[st.tarjetaAutor, { color: themeColors.text }]}>👤 {resena.autor}</Text>
+        <Text style={[st.tarjetaFecha, , { color: themeColors.text }]}>{resena.fecha}</Text>
       </View>
-      <Text style={st.tarjetaServicio}>🏥 {resena.servicio}</Text>
+      <Text style={[st.tarjetaServicio, , { color: themeColors.text }]}>🏥 {resena.servicio}</Text>
       <Text style={st.tarjetaEstrellas}>{estrellas}</Text>
       {resena.comentario ? (
-        <Text style={st.tarjetaComentario}>{"\""}{resena.comentario}{"\""}</Text>
+        <Text style={[st.tarjetaComentario, , { color: themeColors.text }]}>{"\""}{resena.comentario}{"\""}</Text>
       ) : null}
     </View>
   );
@@ -131,7 +133,6 @@ export default function ReviewsScreen() {
   const [servicio,      setServicio]      = useState('');
   const [mostrarServicios, setMostrarServicios] = useState(false); // Controla el despliegue del modal-dropdown de servicios
   const [guardando,     setGuardando]     = useState(false); // Estado de carga para deshabilitar clicks accidentales al guardar
-  
 
   // ── Cargar reseñas guardadas en AsyncStorage al montar ────────────────────
   const cargarResenas = useCallback(async () => {
@@ -203,27 +204,8 @@ export default function ReviewsScreen() {
     ? (resenas.reduce((acc, r) => acc + r.calificacion, 0) / resenas.length).toFixed(1)
     : null;
 
-      const colorScheme = useColorScheme();
-      
-      const themeColors = Colors[colorScheme ?? 'light'];
-      
-      
-      const [loaded] = useFonts({
-    
-        'ATTFShinGoProBold':require('@/assets/fonts/ATTFShinGoProDeBold.ttf'),
-    
-      });
-    
-      useEffect(() => {
-        if (loaded) {
-          SplashScreen.hideAsync();
-        }
-      }, [loaded]);
-    
-      if (!loaded) {
-        return null;
-      }
-    
+  const colorScheme = useColorScheme();
+  const themeColors = Colors[colorScheme ?? 'light'];
 
   // ─── Renderizado de la Interfaz ───────────────────────────────────────────
   return (
@@ -255,12 +237,12 @@ export default function ReviewsScreen() {
         {/* Formulario condicional para redactar nueva opinión */}
         {mostrarForm ? (
           <View style={st.formulario}>
-            <Text style={st.formTitulo}>📝 Nueva reseña</Text>
+            <Text style={[st.formTitulo, {color: themeColors.text }]}>📝 Nueva reseña</Text>
 
             {/* Fila: Nombre Autor */}
-            <Text style={st.etiqueta}>Tu nombre</Text>
+            <Text style={[st.etiqueta, {color: themeColors.text }]}>Tu nombre</Text>
             <TextInput
-              style={st.input}
+              style={[st.input, {color: themeColors.text }]}
               placeholder="Ej: María González"
               placeholderTextColor="#aaa"
               value={autor}
@@ -269,7 +251,7 @@ export default function ReviewsScreen() {
             />
 
             {/* Fila: Selector de servicio (Simulación de Dropdown) */}
-            <Text style={st.etiqueta}>Servicio visitado</Text>
+            <Text style={[st.etiqueta, {color: themeColors.text }]}>Servicio visitado</Text>
             <TouchableOpacity
               style={st.selectorServicio}
               onPress={() => setMostrarServicios(!mostrarServicios)}
@@ -300,13 +282,13 @@ export default function ReviewsScreen() {
             )}
 
             {/* Fila: Calificación en estrellas */}
-            <Text style={st.etiqueta}>Calificación</Text>
+            <Text style={[st.etiqueta, {color: themeColors.text }]}>Calificación</Text>
             <SelectorEstrellas valor={calificacion} onChange={setCalificacion} />
 
             {/* Fila: Comentario Escrito */}
-            <Text style={st.etiqueta}>Comentario (opcional)</Text>
+            <Text style={[st.etiqueta, {color: themeColors.text }]}>Comentario (opcional)</Text>
             <TextInput
-              style={[st.input, st.inputMultilinea]}
+              style={[[st.input, st.inputMultilinea], {color: themeColors.text }]}
               placeholder="¿Cómo fue tu experiencia en el hospital?"
               placeholderTextColor="#aaa"
               value={comentario}
@@ -324,7 +306,7 @@ export default function ReviewsScreen() {
                 style={st.btnCancelar}
                 onPress={() => { setMostrarForm(false); limpiarFormulario(); }}
               >
-                <Text style={st.btnCancelarTexto}>Cancelar</Text>
+                <Text style={[st.btnCancelarTexto, {color: themeColors.text }]}>Cancelar</Text>
               </TouchableOpacity>
               <TouchableOpacity
                 style={[st.btnEnviar, guardando && st.btnDeshabilitado]}
@@ -377,15 +359,15 @@ const st = StyleSheet.create({
 
   // Encabezado
   encabezado:      { backgroundColor: AZUL, padding: 20, paddingTop: 24 },
-  encabezadoTitulo:{ fontSize: 24, fontWeight: 'bold', color: '#fff', fontFamily:'ATTFShinGoProBold',},
+  encabezadoTitulo:{ fontSize: 24, fontWeight: 'bold', color: '#fff', fontFamily:'ATTFShinGoProBold', },
   promedioTexto:   { fontSize: 15, color: '#e3f2fd', marginTop: 6 },
 
   // Botón nueva reseña
   btnNuevaResena:      { margin: 16, backgroundColor: VERDE, paddingVertical: 16, borderRadius: 14, alignItems: 'center' },
-  btnNuevaResenaTexto: { color: '#fff', fontSize: 18, fontWeight: 'bold', fontFamily:'ATTFShinGoProBold', },
+  btnNuevaResenaTexto: { color: '#fff', fontSize: 18, fontWeight: 'bold', fontFamily:'ATTFShinGoProBold',},
 
   // Formulario
-  formulario:    { margin: 16, backgroundColor: '#fff', borderRadius: 16, padding: 18, elevation: 4, shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.08, shadowRadius: 8 },
+  formulario:    { margin: 16, backgroundColor: 'rgba(0, 166, 255, 0.2)', borderRadius: 16, padding: 18, elevation: 4, shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.08, shadowRadius: 8 },
   formTitulo:    { fontSize: 20, fontWeight: 'bold', color: '#222', marginBottom: 16 },
   etiqueta:      { fontSize: 16, fontWeight: '600', color: '#444', marginBottom: 6, marginTop: 12 },
   input:         { backgroundColor: FONDO, borderRadius: 10, paddingHorizontal: 14, paddingVertical: 12, fontSize: 16, color: '#222', borderWidth: 1, borderColor: '#dde3ea' },
@@ -395,7 +377,7 @@ const st = StyleSheet.create({
   // Selector servicio
   selectorServicio:      { backgroundColor: FONDO, borderRadius: 10, paddingHorizontal: 14, paddingVertical: 14, borderWidth: 1, borderColor: '#dde3ea', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
   servicioPlaceholder:   { fontSize: 16, color: '#aaa' },
-  servicioSeleccionado:  { fontSize: 16, color: '#222', fontWeight: '500' },
+  servicioSeleccionado:  { fontSize: 16, color: '#aaa', fontWeight: '500' },
   chevron:               { fontSize: 14, color: '#888' },
   listaServicios:        { backgroundColor: '#fff', borderRadius: 10, borderWidth: 1, borderColor: '#dde3ea', marginTop: 4, maxHeight: 200, overflow: 'hidden' },
   itemServicio:          { paddingVertical: 12, paddingHorizontal: 16 },
@@ -413,15 +395,15 @@ const st = StyleSheet.create({
   filaBotones:       { flexDirection: 'row', gap: 12, marginTop: 20 },
   btnCancelar:       { flex: 1, paddingVertical: 14, borderRadius: 12, alignItems: 'center', borderWidth: 1.5, borderColor: '#ccc' },
   btnCancelarTexto:  { fontSize: 16, color: '#666', fontWeight: '600' },
-  btnEnviar:         { flex: 2, backgroundColor: AZUL, paddingVertical: 14, borderRadius: 12, alignItems: 'center' },
+  btnEnviar:         { flex: 2, backgroundColor: AZUL, paddingVertical: 14, borderRadius: 12, alignItems: 'center', borderColor: '#fff' },
   btnEnviarTexto:    { fontSize: 16, color: '#fff', fontWeight: 'bold' },
   btnDeshabilitado:  { opacity: 0.6 },
 
   // Lista reseñas
   listaContenido: { padding: 16, gap: 12 },
-  tarjeta:        { backgroundColor: '#fff', borderRadius: 14, padding: 16, elevation: 2, shadowColor: '#000', shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.06, shadowRadius: 6 },
+  tarjeta:        { backgroundColor: 'rgba(0, 166, 255, 0.2)' , borderRadius: 14, padding: 16, elevation: 2, shadowColor: '#000', shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.06, shadowRadius: 6 },
   tarjetaEncabezado: { flexDirection: 'row', justifyContent: 'space-between', marginBottom: 6 },
-  tarjetaAutor:      { fontSize: 16, fontWeight: 'bold', color: '#222' },
+  tarjetaAutor:      { fontSize: 16, fontWeight: 'bold' },
   tarjetaFecha:      { fontSize: 13, color: '#aaa' },
   tarjetaServicio:   { fontSize: 14, color: '#555', marginBottom: 6 },
   tarjetaEstrellas:  { fontSize: 20, color: '#f9a825', marginBottom: 6 },
