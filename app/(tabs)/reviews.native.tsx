@@ -4,8 +4,11 @@
  * con estrellas (1 a 5) y dejar comentarios escritos sobre servicios médicos específicos del hospital.
  */
 
+import { Text } from '@/components/text';
 import { Colors } from '@/constants/theme';
 import { useColorScheme } from '@/hooks/use-color-scheme';
+import { useFirebase } from '@/hooks/useFirebasereviews';
+import { Review } from '@/interfaces/exportReview';
 import AsyncStorage from '@react-native-async-storage/async-storage'; // Librería de persistencia asíncrona clave-valor nativa
 import React, { useCallback, useEffect, useState } from 'react';
 import {
@@ -20,7 +23,6 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import { Text } from '@/components/text';
 
 // ─── Tipos ────────────────────────────────────────────────────────────────────
 type Resena = {
@@ -105,6 +107,8 @@ export default function ReviewsScreen() {
   const [servicio, setServicio] = useState('');
   const [mostrarServicios, setMostrarServicios] = useState(false);
   const [guardando, setGuardando] = useState(false);
+  const createReview = useFirebase();
+
 
   const cargarResenas = useCallback(async () => {
     try {
@@ -132,6 +136,7 @@ export default function ReviewsScreen() {
     }
 
     setGuardando(true);
+    
 
     const nueva: Resena = {
       id: Date.now().toString(),
@@ -142,7 +147,23 @@ export default function ReviewsScreen() {
       fecha: new Date().toLocaleDateString('es-CL', {
         day: '2-digit', month: 'long', year: 'numeric'
       }),
-    };
+    }; 
+
+
+     const crearReview: Review = {
+      id: Date.now().toString(),
+      autor: autor.trim(),
+      calificacion,
+      comentario: comentario.trim(),
+      servicio,
+      fecha: new Date().toLocaleDateString('es-CL', {
+        day: '2-digit', month: 'long', year: 'numeric'
+      }),
+    }; 
+
+    createReview(crearReview)
+
+
 
     try {
       const actualizadas = [nueva, ...resenas];
@@ -156,7 +177,10 @@ export default function ReviewsScreen() {
     } finally {
       setGuardando(false);
     }
+
   };
+
+
 
   const limpiarFormulario = () => {
     setAutor('');
@@ -172,6 +196,9 @@ export default function ReviewsScreen() {
 
   const colorScheme = useColorScheme();
   const themeColors = Colors[colorScheme ?? 'light'];
+
+
+
 
   return (
     <SafeAreaView style={[st.safeArea, { backgroundColor: themeColors.background }]}>
@@ -265,6 +292,8 @@ export default function ReviewsScreen() {
               <TouchableOpacity
                 style={[st.btnEnviar, guardando && st.btnDeshabilitado]}
                 onPress={guardarResena}
+                onPressIn={() => {createReview}}
+
                 disabled={guardando}
               >
                 <Text style={st.btnEnviarTexto}>
