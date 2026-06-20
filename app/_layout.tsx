@@ -16,6 +16,7 @@ import { StatusBar } from 'expo-status-bar';
 import 'react-native-reanimated'; // Inicializa el motor de animaciones nativas Reanimated a nivel global para transiciones fluidas.
 
 import { useColorScheme } from '@/hooks/use-color-scheme';
+import { FontSizeProvider } from '@/context/FontSizeContext';
 
 /**
  * CONFIGURACIÓN DE ENRUTAMIENTO (unstable_settings):
@@ -36,20 +37,22 @@ export default function RootLayout() {
      * ThemeProvider: Inyecta el tema seleccionado a todo el árbol de navegación.
      * Facilita el soporte nativo para el modo oscuro/claro, cumpliendo con buenas prácticas de UX.
      */
-    <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-      {/* 
-       * Stack Navigator: Administrador de navegación global basado en pila.
-       * Permite superponer pantallas. En este caso, maneja el flujo principal (tabs) y pantallas modales auxiliares.
-       */}
-      <Stack>
-        {/* Pantalla principal que encapsula las pestañas de la aplicación. Se oculta el encabezado nativo ya que se maneja de forma customizada. */}
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        {/* Pantalla modal secundaria. Se configura con presentación 'modal' para emerger desde abajo, patrón común para formularios o información rápida. */}
-        <Stack.Screen name="modal" options={{ presentation: 'modal', title: 'Modal' }} />
-      </Stack>
-      {/* StatusBar: Barra de estado nativa adaptativa (hora, batería, señal) según el contraste del fondo del tema actual. */}
-      <StatusBar style="auto" />
-    </ThemeProvider>
+    <FontSizeProvider>
+      <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
+        {/* 
+         * Stack Navigator: Administrador de navegación global basado en pila.
+         * Permite superponer pantallas. En este caso, maneja el flujo principal (tabs) y pantallas modales auxiliares.
+         */}
+        <Stack>
+          {/* Pantalla principal que encapsula las pestañas de la aplicación. Se oculta el encabezado nativo ya que se maneja de forma customizada. */}
+          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+          {/* Pantalla modal secundaria. Se configura con presentación 'modal' para emerger desde abajo, patrón común para formularios o información rápida. */}
+          <Stack.Screen name="modal" options={{ presentation: 'modal', title: 'Modal' }} />
+        </Stack>
+        {/* StatusBar: Barra de estado nativa adaptativa (hora, batería, señal) según el contraste del fondo del tema actual. */}
+        <StatusBar style="auto" />
+      </ThemeProvider>
+    </FontSizeProvider>
   );
 }
 

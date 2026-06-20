@@ -20,26 +20,28 @@ import { HapticTab } from '@/components/haptic-tab'; // Botón personalizado con
 import { IconSymbol } from '@/components/ui/icon-symbol'; // Abstracción para renderizar íconos SF Symbols en iOS e íconos SVG/Material en Android/Web.
 import { Colors } from '@/constants/theme';
 import { useColorScheme } from '@/hooks/use-color-scheme';
+import { useFontSize } from '@/context/FontSizeContext';
 
 export default function TabLayout() {
   const colorScheme = useColorScheme();
+  const { fontSizeMultiplier } = useFontSize();
 
-      const [loaded] = useFonts({
-    
-        'ATTFShinGoProBold':require('@/assets/fonts/ATTFShinGoProDeBold.ttf'),
-    
-    
-      });
-    
-      useEffect(() => {
-        if (loaded) {
-          SplashScreen.hideAsync();
-        }
-      }, [loaded]);
-    
-      if (!loaded) {
-        return null;
-      }
+  const [loaded] = useFonts({
+
+    'ATTFShinGoProBold': require('@/assets/fonts/ATTFShinGoProDeBold.ttf'),
+
+
+  });
+
+  useEffect(() => {
+    if (loaded) {
+      SplashScreen.hideAsync();
+    }
+  }, [loaded]);
+
+  if (!loaded) {
+    return null;
+  }
 
   return (
     <Tabs
@@ -51,19 +53,19 @@ export default function TabLayout() {
         // Asignación global de la retroalimentación háptica para todos los botones de la barra de pestañas.
         tabBarButton: HapticTab,
         // Estilos específicos para mejorar la legibilidad y espaciado de los textos y barra.
-        tabBarLabelStyle: { fontSize: 13, fontWeight: '600', fontFamily:'ATTFShinGoProBold',},
+        tabBarLabelStyle: { fontSize: Math.round(13 * fontSizeMultiplier), fontWeight: '600', fontFamily: 'ATTFShinGoProBold', },
         tabBarStyle: { height: 65, paddingBottom: 10, paddingTop: 5 },
       }}>
-      
+
       {/* Pestaña: Inicio (Portal de Bienvenida CS - Camino a la Salud) */}
       <Tabs.Screen
-        name="Bienvenido"
+        name="index"
         options={{
           title: 'Inicio',
           tabBarIcon: ({ color }) => <IconSymbol size={30} name="house.fill" color={color} />,
         }}
       />
-      
+
       {/* Pestaña: Navegar (Pantalla principal con escaneo QR y guiado indoor) */}
       <Tabs.Screen
         name="navigation"
@@ -72,7 +74,7 @@ export default function TabLayout() {
           tabBarIcon: ({ color }) => <IconSymbol size={30} name="location.fill" color={color} />,
         }}
       />
-      
+
       {/* Pestaña: Reseñas (Sección interactiva de feedback de servicios) */}
       <Tabs.Screen
         name="reviews"
@@ -82,16 +84,15 @@ export default function TabLayout() {
         }}
       />
 
-                  {/* Pestaña: Reseñas (Sección interactiva de feedback de servicios) */}
+      {/* Pestaña: Ajustes (Configuraciones de la aplicación) */}
       <Tabs.Screen
-        name="ajustes"
+        name="settings"
         options={{
           title: 'Ajustes',
-          tabBarIcon: ({ color }) => <IconSymbol size={30} name="star.fill" color={color} />,
+          tabBarIcon: ({ color }) => <IconSymbol size={30} name="gearshape.fill" color={color} />,
         }}
+      />
 
-        />
-      
       {/* 
        * Pestaña Oculta: mapa (map)
        * PROPÓSITO: Renderiza la pantalla nativa de mapa SVG.
@@ -102,7 +103,7 @@ export default function TabLayout() {
         name="map"
         options={{ href: null }}
       />
-      
+
       {/* Pestaña Oculta: explore (Plantilla por defecto de Expo, oculta en producción) */}
       <Tabs.Screen
         name="explore"

@@ -23,11 +23,11 @@ import {
   SafeAreaView,
   ScrollView,
   StyleSheet,
-  Text,
   TextInput,
   TouchableOpacity,
   View,
 } from 'react-native';
+import { Text } from '@/components/text';
 
 import puntosGeoJson from '@/assets/data/pts_interes_primer_piso.json';
 import rutasGeoJson from '@/assets/data/rutas_navegacion_primer_piso.json';
@@ -38,40 +38,40 @@ const HEIGHT_COLLAPSED = 100;
 
 // ─── Tipos ────────────────────────────────────────────────────────────────────
 type PuntoInteres = { nombre: string; tipo: string };
-type Ruta = { nombre_ruta: string; accesible: string; coordinates: [number,number][] };
+type Ruta = { nombre_ruta: string; accesible: string; coordinates: [number, number][] };
 
 // ─── Íconos por tipo ──────────────────────────────────────────────────────────
 // Mapeo semántico de tipos de POI a Emojis descriptivos para enriquecer visualmente la lista de selección.
 const TIPO_EMOJI: Record<string, string> = {
-  box:           '🏥',
-  some:          '📋',
-  baño:          '🚻',
-  baños:         '🚻',
-  ascensor:      '🛗',
-  escalera:      '🪜',
-  secretaria:    '🗂️',
+  box: '🏥',
+  some: '📋',
+  baño: '🚻',
+  baños: '🚻',
+  ascensor: '🛗',
+  escalera: '🪜',
+  secretaria: '🗂️',
   sala_descanso: '💺',
-  salida:        '🚪',
-  seguridad:     '🔒',
-  oficina:       '🏢',
-  bodega:        '📦',
-  Entrada:       '🚶',
-  default:       '📍',
+  salida: '🚪',
+  seguridad: '🔒',
+  oficina: '🏢',
+  bodega: '📦',
+  Entrada: '🚶',
+  default: '📍',
 };
 
 // ─── Instrucciones legibles por nombre de ruta ────────────────────────────────
 // Diccionario estático que traduce nombres técnicos de la base de datos espacial (SIG)
 // a frases de guiado claras en lenguaje natural comprensibles para cualquier paciente.
 const INSTRUCCIONES_RUTA: Record<string, string> = {
-  ruta_principal:     'Avanza por el pasillo principal',
-  ruta_boxes_superior:'Dirígete hacia los boxes superiores',
-  ruta_boxes_medio:   'Avanza hacia los boxes del sector medio',
-  ruta_boxes_inferior:'Continúa hacia los boxes inferiores',
+  ruta_principal: 'Avanza por el pasillo principal',
+  ruta_boxes_superior: 'Dirígete hacia los boxes superiores',
+  ruta_boxes_medio: 'Avanza hacia los boxes del sector medio',
+  ruta_boxes_inferior: 'Continúa hacia los boxes inferiores',
   ruta_boxes_extremo: 'Avanza hacia los boxes del extremo',
-  ruta_some:          'Dirígete hacia el sector SOME',
-  ruta_secretarias:   'Avanza hacia el sector de secretarías',
-  ruta_baños:         'Dirígete hacia los baños públicos',
-  ruta_oncologia:     'Avanza hacia el Policlínico de Oncología',
+  ruta_some: 'Dirígete hacia el sector SOME',
+  ruta_secretarias: 'Avanza hacia el sector de secretarías',
+  ruta_baños: 'Dirígete hacia los baños públicos',
+  ruta_oncologia: 'Avanza hacia el Policlínico de Oncología',
 };
 
 // ─── Normalizar texto para matching flexible ──────────────────────────────────
@@ -94,13 +94,13 @@ const normalizar = (texto: string): string =>
 const cargarDestinos = (): PuntoInteres[] =>
   (puntosGeoJson as any).features.map((f: any) => ({
     nombre: f.properties.nombre_puntointeres,
-    tipo:   f.properties.tipo_puntointeres,
+    tipo: f.properties.tipo_puntointeres,
   }));
 
 const cargarRutas = (): Ruta[] =>
   (rutasGeoJson as any).features.map((f: any) => ({
     nombre_ruta: f.properties.nombre_ruta,
-    accesible:   f.properties.accesible,
+    accesible: f.properties.accesible,
     coordinates: f.geometry.coordinates,
   }));
 
@@ -134,8 +134,8 @@ const generarInstrucciones = (
   if (dest.includes('box')) {
     const num = parseInt(destinoNombre.replace(/\D/g, ''), 10);
     // Agrupamiento por numeración de salas médicas (Boxes)
-    if (num <= 3)       instrucciones.push('↗️  ' + INSTRUCCIONES_RUTA['ruta_boxes_superior']);
-    else if (num <= 7)  instrucciones.push('➡️  ' + INSTRUCCIONES_RUTA['ruta_boxes_medio']);
+    if (num <= 3) instrucciones.push('↗️  ' + INSTRUCCIONES_RUTA['ruta_boxes_superior']);
+    else if (num <= 7) instrucciones.push('➡️  ' + INSTRUCCIONES_RUTA['ruta_boxes_medio']);
     else if (num <= 11) instrucciones.push('↘️  ' + INSTRUCCIONES_RUTA['ruta_boxes_inferior']);
     else {
       // Los boxes con números superiores a 11 se ubican en el extremo del pasillo, zona no accesible por rampas directas.
@@ -163,14 +163,14 @@ const generarInstrucciones = (
 export default function NavigationScreen() {
   // Manejo de permisos nativos para la cámara del dispositivo móvil
   const [permission, requestPermission] = useCameraPermissions();
-  const [scanned,          setScanned]          = useState(false); // Previene lecturas redundantes del QR en ráfaga
-  const [origen,           setOrigen]           = useState<string | undefined>(undefined);
-  const [destino,          setDestino]          = useState<string | undefined>(undefined);
-  const [modoAccesible,    setModoAccesible]    = useState(false); // Modifica la ponderación de Dijkstra en el mapa
-  const [busqueda,         setBusqueda]         = useState(''); // Filtro de texto para la lista de POIs
-  const [tipoFiltro,       setTipoFiltro]       = useState<string | null>(null); // Filtro por categoría de POI (box, baño, etc)
+  const [scanned, setScanned] = useState(false); // Previene lecturas redundantes del QR en ráfaga
+  const [origen, setOrigen] = useState<string | undefined>(undefined);
+  const [destino, setDestino] = useState<string | undefined>(undefined);
+  const [modoAccesible, setModoAccesible] = useState(false); // Modifica la ponderación de Dijkstra en el mapa
+  const [busqueda, setBusqueda] = useState(''); // Filtro de texto para la lista de POIs
+  const [tipoFiltro, setTipoFiltro] = useState<string | null>(null); // Filtro por categoría de POI (box, baño, etc)
   const [verInstrucciones, setVerInstrucciones] = useState(false); // Alterna entre ver la lista de POIs y la guía secuencial
-  const [devFid,           setDevFid]           = useState(''); // Resaltador de aristas de desarrollo
+  const [devFid, setDevFid] = useState(''); // Resaltador de aristas de desarrollo
 
   // Control del menú desplegable (Bottom Sheet)
   const [isExpanded, setIsExpanded] = useState(true); // Inicia expandido para facilitar la búsqueda
@@ -194,7 +194,7 @@ export default function NavigationScreen() {
 
   // Lectura de base de datos espaciales una sola vez al montar
   const todosLosDestinos = useMemo(() => cargarDestinos(), []);
-  const todasLasRutas    = useMemo(() => cargarRutas(),    []);
+  const todasLasRutas = useMemo(() => cargarRutas(), []);
 
   // Categorías de servicios disponibles mapeadas dinámicamente para generar la barra horizontal de filtros (Chips)
   const tiposUnicos = useMemo(() => {
@@ -206,7 +206,7 @@ export default function NavigationScreen() {
   const destinosFiltrados = useMemo(() => {
     return todosLosDestinos.filter(p => {
       const coincideBusqueda = p.nombre?.toLowerCase().includes(busqueda.toLowerCase());
-      const coincideTipo     = tipoFiltro ? p.tipo === tipoFiltro : true;
+      const coincideTipo = tipoFiltro ? p.tipo === tipoFiltro : true;
       return coincideBusqueda && coincideTipo;
     });
   }, [todosLosDestinos, busqueda, tipoFiltro]);
@@ -218,7 +218,7 @@ export default function NavigationScreen() {
   }, [origen, destino, todasLasRutas, modoAccesible]);
 
   // ── Handlers ──────────────────────────────────────────────────────────────
-  
+
   /**
    * handleBarCodeScanned:
    * Callback ejecutado al enfocar un código QR legible.
@@ -334,7 +334,7 @@ export default function NavigationScreen() {
 
       {/* Panel Desplegable (Bottom Sheet) con animación de deslizamiento vertical */}
       <Animated.View style={[s.panel, { transform: [{ translateY }] }]}>
-        
+
         {/* Cabecera táctil del panel / Tirador de arrastre */}
         <TouchableOpacity
           activeOpacity={0.9}
@@ -343,7 +343,7 @@ export default function NavigationScreen() {
         >
           {/* Tirador visual de arrastre */}
           <View style={s.tiradorBar} />
-          
+
           {/* Si está contraído, mostrar resumen compacto */}
           {!isExpanded && (
             <View style={s.panelCompactoContenido}>
@@ -412,7 +412,7 @@ export default function NavigationScreen() {
           {destino ? (
             <View style={s.destinoActivo}>
               <Text style={s.destinoActivoTexto}>
-                🧭 <Text style={s.destinoActivoNombre}>{destino.replace(/_/g,' ')}</Text>
+                🧭 <Text style={s.destinoActivoNombre}>{destino.replace(/_/g, ' ')}</Text>
               </Text>
               <TouchableOpacity onPress={() => { setDestino(undefined); setIsExpanded(true); }}>
                 <Text style={s.cambiarDestino}>Cambiar</Text>
@@ -512,51 +512,51 @@ export default function NavigationScreen() {
             </>
           )}
 
-        {/* ── Fila de Controles Inferiores (Configuración de accesibilidad y reset) ── */}
-        <View style={s.filaControles}>
-          {/* Conmutador de ruta adaptada para personas con movilidad reducida (sillas de ruedas) */}
-          <TouchableOpacity
-            style={[s.btnAccesibilidad, modoAccesible && s.btnAccesibilidadActivo]}
-            onPress={() => setModoAccesible(!modoAccesible)}
-          >
-            <Text style={s.btnAccesibilidadTexto}>
-              {modoAccesible ? '♿ Silla de ruedas' : '🚶 Ruta estándar'}
-            </Text>
-          </TouchableOpacity>
-          {/* Botón para reiniciar la navegación y volver a escanear un código QR */}
-          <TouchableOpacity style={s.btnReiniciar} onPress={reiniciar}>
-            <Text style={s.btnReiniciarTexto}>🔄 Reiniciar</Text>
-          </TouchableOpacity>
-        </View>
+          {/* ── Fila de Controles Inferiores (Configuración de accesibilidad y reset) ── */}
+          <View style={s.filaControles}>
+            {/* Conmutador de ruta adaptada para personas con movilidad reducida (sillas de ruedas) */}
+            <TouchableOpacity
+              style={[s.btnAccesibilidad, modoAccesible && s.btnAccesibilidadActivo]}
+              onPress={() => setModoAccesible(!modoAccesible)}
+            >
+              <Text style={s.btnAccesibilidadTexto}>
+                {modoAccesible ? '♿ Silla de ruedas' : '🚶 Ruta estándar'}
+              </Text>
+            </TouchableOpacity>
+            {/* Botón para reiniciar la navegación y volver a escanear un código QR */}
+            <TouchableOpacity style={s.btnReiniciar} onPress={reiniciar}>
+              <Text style={s.btnReiniciarTexto}>🔄 Reiniciar</Text>
+            </TouchableOpacity>
+          </View>
+        </Animated.View>
       </Animated.View>
-    </Animated.View>
-  </View>
+    </View>
   );
 }
 
 // ─── Estilos ──────────────────────────────────────────────────────────────────
-const AZUL  = '#1a73e8';
-const ROJO  = '#e53935';
+const AZUL = '#1a73e8';
+const ROJO = '#e53935';
 const VERDE = '#2e7d32';
 const FONDO = '#f0f4f8';
 
 const s = StyleSheet.create({
-  container:  { flex: 1, backgroundColor: '#000' },
-  centrado:   { flex: 1, justifyContent: 'center', alignItems: 'center', padding: 30, backgroundColor: '#fff' },
-  iconoGrande:{ fontSize: 60, marginBottom: 20 },
+  container: { flex: 1, backgroundColor: '#000' },
+  centrado: { flex: 1, justifyContent: 'center', alignItems: 'center', padding: 30, backgroundColor: '#fff' },
+  iconoGrande: { fontSize: 60, marginBottom: 20 },
 
   // Permisos
-  textoPermiso:     { fontSize: 18, textAlign: 'center', color: '#333', marginBottom: 30, lineHeight: 26 },
-  btnPrimario:      { backgroundColor: AZUL, paddingVertical: 16, paddingHorizontal: 40, borderRadius: 14 },
+  textoPermiso: { fontSize: 18, textAlign: 'center', color: '#333', marginBottom: 30, lineHeight: 26 },
+  btnPrimario: { backgroundColor: AZUL, paddingVertical: 16, paddingHorizontal: 40, borderRadius: 14 },
   btnPrimarioTexto: { color: '#fff', fontSize: 18, fontWeight: 'bold' },
 
   // QR
-  overlayQR:      { flex: 1, backgroundColor: 'rgba(0,0,0,0.6)', justifyContent: 'center', alignItems: 'center', padding: 24 },
-  tituloQR:       { fontSize: 32, fontWeight: 'bold', color: '#fff', marginBottom: 16, fontFamily:'ATTFShinGoProBold', },
-  instruccionQR:  { fontSize: 18, color: '#fff', textAlign: 'center', lineHeight: 26, marginBottom: 40 },
-  marcoQR:        { width: 220, height: 220, borderWidth: 3, borderColor: '#fff', borderRadius: 16, marginBottom: 40 },
-  btnSimular:     { backgroundColor: ROJO, padding: 14, borderRadius: 10, borderWidth: 2, borderColor: '#fff' },
-  btnSimularTexto:{ color: '#fff', fontWeight: 'bold', fontSize: 14 },
+  overlayQR: { flex: 1, backgroundColor: 'rgba(0,0,0,0.6)', justifyContent: 'center', alignItems: 'center', padding: 24 },
+  tituloQR: { fontSize: 32, fontWeight: 'bold', color: '#fff', marginBottom: 16, fontFamily: 'ATTFShinGoProBold', },
+  instruccionQR: { fontSize: 18, color: '#fff', textAlign: 'center', lineHeight: 26, marginBottom: 40 },
+  marcoQR: { width: 220, height: 220, borderWidth: 3, borderColor: '#fff', borderRadius: 16, marginBottom: 40 },
+  btnSimular: { backgroundColor: ROJO, padding: 14, borderRadius: 10, borderWidth: 2, borderColor: '#fff' },
+  btnSimularTexto: { color: '#fff', fontWeight: 'bold', fontSize: 14 },
 
   // Layout
   mapaContainerAbsolute: {
@@ -654,52 +654,52 @@ const s = StyleSheet.create({
   },
 
   // Toggle destinos / instrucciones
-  toggleBar:         { flexDirection: 'row', backgroundColor: FONDO, borderRadius: 12, marginBottom: 10, padding: 3 },
-  toggleBtn:         { flex: 1, paddingVertical: 8, borderRadius: 10, alignItems: 'center' },
-  toggleBtnActivo:   { backgroundColor: '#fff', elevation: 2 },
-  toggleTexto:       { fontSize: 14, color: '#888', fontWeight: '600' },
+  toggleBar: { flexDirection: 'row', backgroundColor: FONDO, borderRadius: 12, marginBottom: 10, padding: 3 },
+  toggleBtn: { flex: 1, paddingVertical: 8, borderRadius: 10, alignItems: 'center' },
+  toggleBtnActivo: { backgroundColor: '#fff', elevation: 2 },
+  toggleTexto: { fontSize: 14, color: '#888', fontWeight: '600' },
   toggleTextoActivo: { color: AZUL },
 
   // Destino activo
-  destinoActivo:       { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8, backgroundColor: '#e8f5e9', padding: 10, borderRadius: 10 },
-  destinoActivoTexto:  { fontSize: 14, color: '#333' },
+  destinoActivo: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8, backgroundColor: '#e8f5e9', padding: 10, borderRadius: 10 },
+  destinoActivoTexto: { fontSize: 14, color: '#333' },
   destinoActivoNombre: { fontWeight: 'bold', color: VERDE },
-  cambiarDestino:      { color: AZUL, fontWeight: 'bold', fontSize: 14 },
-  panelTitulo:         { fontSize: 18, fontWeight: 'bold', color: '#222', marginBottom: 10, textAlign: 'center' },
+  cambiarDestino: { color: AZUL, fontWeight: 'bold', fontSize: 14 },
+  panelTitulo: { fontSize: 18, fontWeight: 'bold', color: '#222', marginBottom: 10, textAlign: 'center' },
 
   // Instrucciones
-  listaInstrucciones:      { flex: 1, marginBottom: 8 },
-  itemInstruccion:         { backgroundColor: FONDO, borderRadius: 10, padding: 12, marginBottom: 6, borderLeftWidth: 3, borderLeftColor: AZUL },
-  itemInstruccionInicio:   { borderLeftColor: VERDE },
-  itemInstruccionFin:      { borderLeftColor: ROJO },
-  itemInstruccionTexto:    { fontSize: 15, color: '#333', lineHeight: 22 },
+  listaInstrucciones: { flex: 1, marginBottom: 8 },
+  itemInstruccion: { backgroundColor: FONDO, borderRadius: 10, padding: 12, marginBottom: 6, borderLeftWidth: 3, borderLeftColor: AZUL },
+  itemInstruccionInicio: { borderLeftColor: VERDE },
+  itemInstruccionFin: { borderLeftColor: ROJO },
+  itemInstruccionTexto: { fontSize: 15, color: '#333', lineHeight: 22 },
 
   // Buscador
   buscadorContainer: { marginBottom: 8 },
-  buscador:          { backgroundColor: FONDO, borderRadius: 12, paddingHorizontal: 14, paddingVertical: 10, fontSize: 15, color: '#222', borderWidth: 1, borderColor: '#dde3ea' },
+  buscador: { backgroundColor: FONDO, borderRadius: 12, paddingHorizontal: 14, paddingVertical: 10, fontSize: 15, color: '#222', borderWidth: 1, borderColor: '#dde3ea' },
 
   // Chips
-  filtrosScroll:    { marginBottom: 8 },
+  filtrosScroll: { marginBottom: 8 },
   filtrosContenido: { paddingRight: 16, gap: 8, flexDirection: 'row' },
-  chipFiltro:       { backgroundColor: FONDO, paddingVertical: 7, paddingHorizontal: 12, borderRadius: 20, borderWidth: 1, borderColor: '#dde3ea' },
+  chipFiltro: { backgroundColor: FONDO, paddingVertical: 7, paddingHorizontal: 12, borderRadius: 20, borderWidth: 1, borderColor: '#dde3ea' },
   chipFiltroActivo: { backgroundColor: AZUL, borderColor: AZUL },
-  chipTexto:        { fontSize: 13, color: '#555', fontWeight: '600' },
-  chipTextoActivo:  { color: '#fff' },
+  chipTexto: { fontSize: 13, color: '#555', fontWeight: '600' },
+  chipTextoActivo: { color: '#fff' },
 
   // Lista destinos
-  listaDestinos:     { flex: 1, marginBottom: 6 },
-  itemDestino:       { flexDirection: 'row', alignItems: 'center', paddingVertical: 10, paddingHorizontal: 10, borderRadius: 10, marginBottom: 5, backgroundColor: FONDO },
+  listaDestinos: { flex: 1, marginBottom: 6 },
+  itemDestino: { flexDirection: 'row', alignItems: 'center', paddingVertical: 10, paddingHorizontal: 10, borderRadius: 10, marginBottom: 5, backgroundColor: FONDO },
   itemDestinoActivo: { backgroundColor: '#e3f2fd', borderWidth: 1.5, borderColor: AZUL },
-  itemIcono:         { fontSize: 20, marginRight: 10 },
-  itemNombre:        { fontSize: 15, color: '#222', flex: 1, fontWeight: '500' },
-  checkDestino:      { fontSize: 18, color: AZUL, fontWeight: 'bold' },
-  sinResultados:     { textAlign: 'center', color: '#999', fontSize: 15, paddingVertical: 16 },
+  itemIcono: { fontSize: 20, marginRight: 10 },
+  itemNombre: { fontSize: 15, color: '#222', flex: 1, fontWeight: '500' },
+  checkDestino: { fontSize: 18, color: AZUL, fontWeight: 'bold' },
+  sinResultados: { textAlign: 'center', color: '#999', fontSize: 15, paddingVertical: 16 },
 
   // Controles
-  filaControles:          { flexDirection: 'row', gap: 10, marginTop: 6 },
-  btnAccesibilidad:       { flex: 2, backgroundColor: FONDO, paddingVertical: 12, borderRadius: 12, alignItems: 'center', borderWidth: 1, borderColor: '#cfd8dc' },
+  filaControles: { flexDirection: 'row', gap: 10, marginTop: 6 },
+  btnAccesibilidad: { flex: 2, backgroundColor: FONDO, paddingVertical: 12, borderRadius: 12, alignItems: 'center', borderWidth: 1, borderColor: '#cfd8dc' },
   btnAccesibilidadActivo: { backgroundColor: '#e3f2fd', borderColor: AZUL },
-  btnAccesibilidadTexto:  { fontSize: 14, fontWeight: 'bold', color: '#444' },
-  btnReiniciar:           { flex: 1, backgroundColor: ROJO, paddingVertical: 12, borderRadius: 12, alignItems: 'center' },
-  btnReiniciarTexto:      { color: '#fff', fontWeight: 'bold', fontSize: 14 },
+  btnAccesibilidadTexto: { fontSize: 14, fontWeight: 'bold', color: '#444' },
+  btnReiniciar: { flex: 1, backgroundColor: ROJO, paddingVertical: 12, borderRadius: 12, alignItems: 'center' },
+  btnReiniciarTexto: { color: '#fff', fontWeight: 'bold', fontSize: 14 },
 });

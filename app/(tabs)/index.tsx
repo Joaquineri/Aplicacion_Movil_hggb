@@ -12,7 +12,8 @@
 
 import { useRouter } from 'expo-router';
 import React from 'react';
-import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
+import { Text } from '@/components/text';
 
 import { Colors } from '@/constants/theme';
 import { useColorScheme } from '@/hooks/use-color-scheme';
@@ -29,24 +30,24 @@ export default function BienvenidoScreen() {
   const navegarA = (ruta: '/navigation' | '/reviews') => {
     router.push(ruta);
   };
-    const [loaded] = useFonts({
-  
-      'ATTFShinGoProBold':require('@/assets/fonts/ATTFShinGoProDeBold.ttf'),
-  
-  
-    });
-  
-    useEffect(() => {
-      if (loaded) {
-        SplashScreen.hideAsync();
-      }
-    }, [loaded]);
-  
-    if (!loaded) {
-      return null;
+  const [loaded] = useFonts({
+
+    'ATTFShinGoProBold': require('@/assets/fonts/ATTFShinGoProDeBold.ttf'),
+
+
+  });
+
+  useEffect(() => {
+    if (loaded) {
+      SplashScreen.hideAsync();
     }
-    
-  
+  }, [loaded]);
+
+  if (!loaded) {
+    return null;
+  }
+
+
   return (
     <ScrollView
       style={[styles.scrollContainer, { backgroundColor: themeColors.background }]}
@@ -169,7 +170,7 @@ const styles = StyleSheet.create({
     fontSize: 28,
     fontWeight: 'bold',
     textAlign: 'center',
-    fontFamily:'ATTFShinGoProBold',
+    fontFamily: 'ATTFShinGoProBold',
   },
   subtituloHospital: {
     fontSize: 14,
@@ -177,7 +178,7 @@ const styles = StyleSheet.create({
     marginTop: 4,
     textAlign: 'center',
     fontWeight: '500',
-    fontFamily:'ATTFShinGoProBold',
+    fontFamily: 'ATTFShinGoProBold',
   },
   divisor: {
     width: 60,
@@ -228,7 +229,7 @@ const styles = StyleSheet.create({
   tarjetaTitulo: {
     fontSize: 17,
     fontWeight: 'bold',
-    fontFamily:'ATTFShinGoProBold',
+    fontFamily: 'ATTFShinGoProBold',
   },
   tarjetaDescripcion: {
     fontSize: 13,
@@ -250,7 +251,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: 'bold',
     marginBottom: 14,
-    fontFamily:'ATTFShinGoProBold',
+    fontFamily: 'ATTFShinGoProBold',
   },
   guiaPaso: {
     flexDirection: 'row',
