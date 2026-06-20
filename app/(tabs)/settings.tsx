@@ -71,7 +71,7 @@ const styles = StyleSheet.create({
   encabezadoTitulo:{ 
     fontSize: 24, fontWeight: 'bold', color: '#fff', 
     fontFamily:'ATTFShinGoProBold',},
-  encabezado:      { backgroundColor: '#c41313', padding: 20, paddingTop: 45
+  encabezado:      { backgroundColor: '#1a73e8', padding: 20, paddingTop: 45
    }
 
 ,
